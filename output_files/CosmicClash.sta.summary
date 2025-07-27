@@ -1,0 +1,341 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1100mV 85C Model Setup 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : -7.145
+TNS   : -44.966
+
+Type  : Slow 1100mV 85C Model Setup 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : -7.052
+TNS   : -46.711
+
+Type  : Slow 1100mV 85C Model Setup 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : -5.247
+TNS   : -5.247
+
+Type  : Slow 1100mV 85C Model Setup 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : -4.995
+TNS   : -4.995
+
+Type  : Slow 1100mV 85C Model Setup 'CLOCK_50'
+Slack : -3.987
+TNS   : -64.638
+
+Type  : Slow 1100mV 85C Model Setup 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 30.602
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Hold 'CLOCK_50'
+Slack : -2.236
+TNS   : -12.388
+
+Type  : Slow 1100mV 85C Model Hold 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 0.389
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Hold 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.438
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Hold 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.635
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Hold 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.778
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Hold 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.901
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Recovery 'CLOCK_50'
+Slack : 16.881
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Removal 'CLOCK_50'
+Slack : 0.765
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.306
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.318
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.414
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.423
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~FRACTIONAL_PLL|vcoph[0]'
+Slack : 1.666
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 8.864
+TNS   : 0.000
+
+Type  : Slow 1100mV 85C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 18.763
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Setup 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : -7.219
+TNS   : -45.650
+
+Type  : Slow 1100mV 0C Model Setup 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : -7.032
+TNS   : -46.887
+
+Type  : Slow 1100mV 0C Model Setup 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : -5.303
+TNS   : -5.303
+
+Type  : Slow 1100mV 0C Model Setup 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : -5.078
+TNS   : -5.078
+
+Type  : Slow 1100mV 0C Model Setup 'CLOCK_50'
+Slack : -3.699
+TNS   : -58.392
+
+Type  : Slow 1100mV 0C Model Setup 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 31.006
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Hold 'CLOCK_50'
+Slack : -2.275
+TNS   : -12.736
+
+Type  : Slow 1100mV 0C Model Hold 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 0.367
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Hold 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.454
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Hold 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.659
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Hold 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.780
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Hold 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.972
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Recovery 'CLOCK_50'
+Slack : 16.987
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Removal 'CLOCK_50'
+Slack : 0.716
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.344
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.349
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.380
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.398
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~FRACTIONAL_PLL|vcoph[0]'
+Slack : 1.666
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 8.817
+TNS   : 0.000
+
+Type  : Slow 1100mV 0C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 18.746
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Setup 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : -3.821
+TNS   : -23.019
+
+Type  : Fast 1100mV 85C Model Setup 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : -3.802
+TNS   : -24.703
+
+Type  : Fast 1100mV 85C Model Setup 'CLOCK_50'
+Slack : -2.948
+TNS   : -49.379
+
+Type  : Fast 1100mV 85C Model Setup 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : -2.638
+TNS   : -2.638
+
+Type  : Fast 1100mV 85C Model Setup 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : -2.518
+TNS   : -2.518
+
+Type  : Fast 1100mV 85C Model Setup 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 33.095
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Hold 'CLOCK_50'
+Slack : -1.076
+TNS   : -5.763
+
+Type  : Fast 1100mV 85C Model Hold 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 0.230
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Hold 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.255
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Hold 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.335
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Hold 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.347
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Hold 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.430
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Recovery 'CLOCK_50'
+Slack : 18.016
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Removal 'CLOCK_50'
+Slack : 0.419
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.278
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.344
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.491
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~FRACTIONAL_PLL|vcoph[0]'
+Slack : 1.666
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 8.807
+TNS   : 0.000
+
+Type  : Fast 1100mV 85C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 18.888
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Setup 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : -3.590
+TNS   : -21.932
+
+Type  : Fast 1100mV 0C Model Setup 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : -3.534
+TNS   : -23.088
+
+Type  : Fast 1100mV 0C Model Setup 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : -2.523
+TNS   : -2.523
+
+Type  : Fast 1100mV 0C Model Setup 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : -2.419
+TNS   : -2.419
+
+Type  : Fast 1100mV 0C Model Setup 'CLOCK_50'
+Slack : -2.354
+TNS   : -38.703
+
+Type  : Fast 1100mV 0C Model Setup 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 34.004
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Hold 'CLOCK_50'
+Slack : -1.061
+TNS   : -5.793
+
+Type  : Fast 1100mV 0C Model Hold 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 0.209
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Hold 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.242
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Hold 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.325
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Hold 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.350
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Hold 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.393
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Recovery 'CLOCK_50'
+Slack : 18.216
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Removal 'CLOCK_50'
+Slack : 0.368
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'DisplayObj:User2|animationFSM:FSM|y[0]'
+Slack : 0.320
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'DisplayObj:User1|animationFSM:FSM|y[0]'
+Slack : 0.375
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'Bullet:U2_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.485
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'Bullet:U1_B1|Bullet_FSM:fsm|y[0]'
+Slack : 0.489
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~FRACTIONAL_PLL|vcoph[0]'
+Slack : 1.666
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 8.800
+TNS   : 0.000
+
+Type  : Fast 1100mV 0C Model Minimum Pulse Width 'VGA1|mypll|altpll_component|auto_generated|generic_pll1~PLL_OUTPUT_COUNTER|divclk'
+Slack : 18.886
+TNS   : 0.000
+
+------------------------------------------------------------

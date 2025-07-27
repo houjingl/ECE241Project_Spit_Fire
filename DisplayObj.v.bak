@@ -1,0 +1,386 @@
+module DisplayObj(CLOCK_50, KEY, keyboard_input, keyboard_input_en, LEDR,
+                VGA_X_Pos, VGA_Y_Pos, VGA_Color, VGA_Plot_EN, //VGA adapter input
+                Obj_Init_X, Obj_Init_Y, //Object position
+                Obj_Memory_Color, Memory_XC, Memory_YC //outputs for external memory module
+                );
+
+    input CLOCK_50;
+
+    output [3:0] LEDR;
+
+
+    /////////////////////////////AREA reserved for KEYboard inputs////////////////////////////////
+    input [7:0] keyboard_input;
+    input keyboard_input_en;
+    /////////////////////////////////////////////////////////////////////////////////////////////
+
+    input [3:0] KEY; //No need to change, always need KEY0 as rstn
+
+    output [8:0] VGA_X_Pos; //wired to VGA_X
+    output [7:0] VGA_Y_Pos; //wired to VGA_Y
+    output [2:0] VGA_Color; //wired to VGA_COLOR
+    output VGA_Plot_EN; //wired to plot_enable
+
+    output [8:0] Obj_Init_X; //Return the current x location of the object
+    output [7:0] Obj_Init_Y; //Return the current y loaction of the object
+
+    input [2:0] Obj_Memory_Color; //Wired in from the memory
+    output [4:0] Memory_XC; //Wired out to the memory XC
+    output [4:0] Memory_YC; //Wired out to the memory YC
+
+    parameter [8:0] X_init_loc = 9'd160;
+    parameter [7:0] Y_init_loc = 8'd120;
+    parameter User1OrUser2 = 1'b1; // 0 -> user1, 1-> user2
+
+    //Wire for the FSM
+    wire paint_done, move_enable, rstn, startn, go_down, go_up, go_left, go_right; //inputs
+    wire v_enable, h_enable, upDn, LeftRight, plot_enable, erase_enable; /* outputs */
+    
+    //Wire between the Registers
+    wire [8:0] newX_Loc, oldX_Loc;
+    wire [7:0] newY_Loc, oldY_Loc;
+    wire [4:0] XC;
+    wire [4:0] YC;
+
+    //////////////NEW ASSIGNMENTS FOR EXTERNAL VGA AND MEMORY MODULE////////////////
+    assign VGA_X_Pos = oldX_Loc + XC;
+    assign VGA_Y_Pos = oldY_Loc + YC;
+    assign VGA_Plot_EN = plot_enable;
+    assign Obj_Init_X = oldX_Loc;
+    assign Obj_Init_Y = oldY_Loc;
+
+    assign Memory_XC = XC;
+    assign Memory_YC = YC;
+    ////////////////////////////////////////////////////////////////////////////////
+
+    assign LEDR[0] = go_down;
+    assign LEDR[1] = go_up;
+    assign LEDR[2] = go_left;
+    assign LEDR[3] = go_right;
+    
+    ///////////////Subjected to Changes once Keyboard inputs are connected//////////////
+    
+    assign rstn = KEY[0];
+    assign startn = KEY[3];
+    assign go_down = movement[1];
+    assign go_up = movement[0];
+    assign go_left = movement[3];
+    assign go_right = movement[2];
+    assign move_enable = (movement == 4'b0)? 0:1;
+    assign paint_done = (YC == 5'b11111 && XC == 5'b11111);
+
+    ////////////////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////Area Reserved for Keyboard input Processing Module//////////
+    
+    wire [3:0] movement;
+    keyboardInputProcessor keyboard (CLOCK_50, keyboard_input, keyboard_input_en, movement, rstn);
+        defparam keyboard.User1OrUser2 = User1OrUser2;
+
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    //registers to store XY initial loc //regn(R, Resetn, Clock, Q);
+    regn X_InitialLOC (newX_Loc, rstn, CLOCK_50, oldX_Loc);
+        defparam X_InitialLOC.n = 9;
+        defparam X_InitialLOC.rst_Loc = X_init_loc;
+    regn Y_InitialLOC (newY_Loc, rstn, CLOCK_50, oldY_Loc);
+        defparam Y_InitialLOC.n = 8;
+        defparam Y_InitialLOC.rst_Loc = Y_init_loc;
+
+    //Counters for XC and YC updownCounter(oldY_loc, V_enable, UpDn, rstn, clock, newY_Loc);
+    updownCounter CounterUpDn(oldY_Loc, v_enable, upDn, rstn, CLOCK_50, newY_Loc);
+        defparam CounterUpDn.rst_Loc = Y_init_loc;
+    //module leftrightConter(oldX_loc, H_enable, LeftRight, rstn, loadn, clock, newX_Loc);
+    leftrightConter CounterLR(oldX_Loc, h_enable, LeftRight, rstn, CLOCK_50, newX_Loc);
+        defparam CounterLR.rst_Loc = X_init_loc;
+
+    //MUX for selecting white and color from the object memory
+    colorSelection_MUX Color_MUX(Obj_Memory_Color, erase_enable, VGA_Color);
+    
+    //Animation FSM;
+    animationFSM FSM(CLOCK_50,
+                    paint_done, move_enable, rstn, startn, go_down, go_up, go_left, go_right, oldX_Loc, oldY_Loc,//inputs
+                    v_enable, h_enable, upDn, LeftRight, plot_enable, erase_enable, idling /* outputs */);
+
+
+    //Counters for printing the memory count (Clock, Resetn, Enable, Q)
+    wire YCincrement;
+    count X_count (CLOCK_50, rstn, plot_enable, XC);
+    count Y_count (CLOCK_50, rstn, YCincrement, YC);
+    assign YCincrement = (XC == 5'b11111);
+endmodule
+
+module keyboardInputProcessor (CLOCK_50, keyboard_in, keyboard_in_en, movement_input, rstn);
+    input [7:0] keyboard_in;
+    input CLOCK_50;
+    input rstn;
+    input keyboard_in_en;
+    output reg [3:0] movement_input;
+    parameter [3:0] go_down = 4'b0001, go_up = 4'b0010, go_right = 4'b0100, go_left = 4'b1000, stay = 4'b0000;
+    parameter [7:0] w = 8'h1D, a = 8'h1C, s = 8'h1B, d = 8'h23, stop = 8'hF0;
+    parameter [7:0] i = 8'h43, j = 8'h3B, k = 8'h42, l = 8'h4b;
+    parameter User1OrUser2 = 1'b1; //0 -> User1 1 -> User2
+
+    always @(*) begin
+        if (!User1OrUser2)begin
+            case(keyboard_in) 
+                w : movement_input = go_up;
+                s : movement_input = go_down;
+                a : movement_input = go_left;
+                d : movement_input = go_right;
+                stop : movement_input = stay;
+            endcase
+        end
+        else begin
+            case(keyboard_in) 
+                i : movement_input = go_up;
+                k : movement_input = go_down;
+                j : movement_input = go_left;
+                l : movement_input = go_right;
+                stop : movement_input = stay;
+            endcase
+        end
+            
+    end
+endmodule
+
+module regn(R, Resetn, Clock, Q);
+//Caution: This n need to be redefine in the top level module
+//Using: defparam U1.n = 7; //U1 is the name of the module
+
+//Citation: This module is modified based on the regn module in the vga_demo of VGA animation made by Prof. Brown
+
+//rst_Loc for x = 9'd160
+//rst_Loc for y = 8'd120
+    parameter n = 8;
+    parameter rst_Loc = 8'd160;
+    input [n-1:0] R;
+    input Resetn, Clock;
+    output reg [n-1:0] Q;
+
+    always @(posedge Clock)
+        if (!Resetn)
+            Q <= rst_Loc;
+        else
+            Q <= R;
+endmodule
+
+module updownCounter(oldY_loc, V_enable, UpDn, rstn, clock, newY_Loc);
+    input [7:0] oldY_loc;
+    input V_enable;
+    input rstn;
+    input clock;
+    input UpDn;
+    wire slow;
+
+    reg[20:0] fast;
+    output reg [7:0] newY_Loc;
+//rst_Loc for x = 9'd160
+//rst_Loc for y = 8'd120
+    parameter rst_Loc = 9'd160;
+
+    always@ (posedge clock, negedge rstn)
+    begin
+        if(rstn == 1'b0)
+            fast <= 20'd255;
+        else if(slow == 1'b1)//
+            fast <= 20'd255;
+        else
+            fast <= fast - 1'b1;
+    end
+
+    assign slow = (fast == 20'b0)? 1:0;
+
+    always@(posedge clock, negedge rstn) begin
+        if (rstn == 0)
+            newY_Loc <= rst_Loc;
+        else if (V_enable && slow) begin
+            if (UpDn)
+                newY_Loc <= oldY_loc + 1;
+            else
+                newY_Loc <= oldY_loc - 1;
+        end
+    end
+endmodule
+
+module leftrightConter(oldX_loc, H_enable, LeftRight, rstn, clock, newX_Loc);
+    input [8:0] oldX_loc;
+    input H_enable;
+    input LeftRight;
+    input rstn;
+    input clock;
+    wire slow;
+
+    reg[20:0] fast;
+    output reg [8:0] newX_Loc;
+//rst_Loc for x = 9'd160
+//rst_Loc for y = 8'd120
+    parameter rst_Loc = 9'd160;
+
+    always@ (posedge clock, negedge rstn)
+    begin
+        if(rstn == 1'b0)
+            fast <= 20'd255;
+        else if(slow == 1'b1)//
+            fast <= 20'd255;
+        else
+            fast <= fast - 1'b1;
+    end
+
+    assign slow = (fast == 20'b0)? 1:0;
+
+    always@(posedge clock, negedge rstn) begin
+        if (rstn == 0)
+            newX_Loc <= rst_Loc;
+        else if (H_enable && slow) begin
+            if (LeftRight)
+                newX_Loc <= oldX_loc + 1; //moving right
+            else
+                newX_Loc <= oldX_loc - 1; //moving left
+        end
+    end
+
+endmodule
+
+module slow_clock (CLOCK_50, rstn, slow_clock);
+    input CLOCK_50;
+    input rstn;
+    output slow_clock;
+    reg[20:0] fast;
+    always@ (posedge CLOCK_50, negedge rstn)
+    begin
+        if(rstn == 1'b0)
+            fast <= 20'd255;
+        else if(slow_clock == 1'b1)//
+            fast <= 20'd255;
+        else
+            fast <= fast - 1'b1;
+    end
+
+    assign slow_clock = (fast == 20'b0)? 1:0;
+endmodule
+
+module count (Clock, Resetn, Enable, Q);
+
+//Citation: This module is modified based on the count module in the vga_demo of VGA animation made by Prof. Brown
+
+//To count X_currentLoc, n = 5
+//To count Y_currentLoc, n = 5
+
+    parameter n = 5;
+    input Clock, Resetn, Enable;
+    output reg [n-1:0] Q;
+
+    always @ (posedge Clock)
+        if (Resetn == 0)
+            Q <= 0;
+        else if (Enable)
+            Q <= Q + 1;
+endmodule
+
+module animationFSM(CLOCK_50,
+                   paint_done, move_enable, rstn, startn, go_down, go_up, go_left, go_right, Obj_Init_X, Obj_Init_Y,//inputs
+                   v_enable, h_enable, upDn, LeftRight, plot_enable, erase_enable, idle_sig /* outputs */);
+
+   input paint_done, move_enable, rstn, startn, go_down, go_up, go_left, go_right;
+   input [8:0] Obj_Init_X;
+   input [7:0] Obj_Init_Y;
+   output v_enable, h_enable, upDn, LeftRight, plot_enable, erase_enable, idle_sig;
+   reg control_sig, goD, goU, goL, goR;
+
+   input CLOCK_50;
+
+   wire signal_uni;
+   assign signal_uni = (goD && ~goU && ~goL && ~goR) || (~goD && goU && ~goL && ~goR) || (~goD && ~goU && goL && ~goR) || (~goD && ~goU && ~goL && goR);
+
+   reg [6:0] y, Y;
+   parameter[6:0] Sidle = 7'b0000001, Sdraw = 7'b0000010, Serase = 7'b0000100, 
+                Sdown = 7'b0001000, Sup = 7'b0010000, Sleft = 7'b0100000, Sright = 7'b1000000;
+
+   always @(y, paint_done, move_enable, rstn, startn, goD, goU, goL, goR)
+   begin
+       case(y)
+           Sidle: if(startn == 0) Y = Sdraw;
+           Sdraw: if(move_en && paint_done && signal_uni) Y = Serase;
+                   else Y = Sdraw;
+           Serase: if (paint_done == 1 && Obj_Init_X == 9'b1 && goL) Y = Sdraw;
+                   else if (paint_done == 1 && Obj_Init_X == 9'd287 && goR) Y = Sdraw;
+                   else if (paint_done == 1 && Obj_Init_Y == 8'd1 && goD) Y = Sdraw;
+                   else if (paint_done == 1 && Obj_Init_Y == 8'd207 && goU) Y = Sdraw;
+                   else if (paint_done == 1 && (Obj_Init_X == 8'd127 && goR) || (Obj_Init_X == 8'd160 && goL)) Y = Sdraw;
+                   else if(paint_done == 1 && goD && ~goU && ~goL && ~goR) Y = Sdown;
+                   else if(paint_done == 1 && ~goD && goU && ~goL && ~goR) Y = Sup;
+                   else if(paint_done == 1 && ~goD && ~goU && goL && ~goR) Y = Sleft;
+                   else if(paint_done == 1 && ~goD && ~goU && ~goL && goR) Y = Sright;
+                   else Y = Serase;
+           Sdown: Y = Sdraw;
+           Sup: Y = Sdraw;
+           Sleft: Y = Sdraw;
+           Sright: Y = Sdraw;
+           
+           default: Y = Sidle;
+       endcase
+   end
+   
+   assign draw_state_output = y[1];
+
+   //control signal register
+   always@ (posedge CLOCK_50, negedge rstn)
+   begin
+       if(rstn == 0)begin
+           control_sig <= 1'b0;
+           goD <= 1'b0;
+           goU <= 1'b0;
+           goL <= 1'b0;
+           goR <= 1'b0;
+       end
+       else if(draw_state_output)begin
+           goD <= go_down;
+           goU <= go_up;
+           goL <= go_left;
+           goR <= go_right;
+       end
+   end
+
+   reg move_en;
+   always@ (posedge CLOCK_50)
+   begin
+       if(draw_state_output && move_enable)
+           move_en <= 1'b1;
+       else if (!draw_state_output)
+           move_en <= 1'b0;
+   end
+
+   //current & next state logic
+   always@ (posedge CLOCK_50, negedge rstn)
+   begin
+       if(rstn == 0)
+           y <= Sidle;
+       else
+           y <= Y;
+   end
+
+   //output logic
+   assign v_enable = y[3] || y[4];
+   assign h_enable = y[5] || y[6];
+   assign upDn = y[4];
+   assign LeftRight = y[6];
+   assign plot_enable = y[1] || y[2];
+   assign erase_enable = y[2];
+   assign idle_sig = y[0];
+
+endmodule
+
+module colorSelection_MUX(mem_RGB, s, out_RGB);
+    input[2:0] mem_RGB;
+    input s;
+    output[2:0] out_RGB;
+
+    assign out_RGB = (s == 1'b1)? 3'b111 : mem_RGB;
+
+endmodule
+
+
+
+

@@ -1,0 +1,7 @@
+Info (10281): Verilog HDL Declaration information at new_keyboard.v(27): object "break_code" differs only in case from object "BREAK_CODE" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/new_keyboard.v Line: 27
+Info (10281): Verilog HDL Declaration information at new_keyboard.v(16): object "key_enter" differs only in case from object "KEY_Enter" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/new_keyboard.v Line: 16
+Info (10281): Verilog HDL Declaration information at new_keyboard.v(17): object "key_space" differs only in case from object "KEY_space" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/new_keyboard.v Line: 17
+Info (10281): Verilog HDL Declaration information at new_keyboard.v(19): object "key_esc" differs only in case from object "KEY_ESC" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/new_keyboard.v Line: 19
+Info (10281): Verilog HDL Declaration information at bullet.v(68): object "y" differs only in case from object "Y" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/bullet.v Line: 68
+Info (10281): Verilog HDL Declaration information at DisplayObj.v(260): object "y" differs only in case from object "Y" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/DisplayObj.v Line: 260
+Info (10281): Verilog HDL Declaration information at CosmicClash.v(319): object "y" differs only in case from object "Y" in the same scope File: D:/Quartus_Projects/CosmicClash/CosmicClash/CosmicClash.v Line: 319

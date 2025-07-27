@@ -1,0 +1,192 @@
+module Bullet(CLOCK_50, rstn, fire, gunLoc_X, gunLoc_Y, leftRight,//input
+                plot_EN, bulletLoc_X, bulletLoc_Y, bullet_color);//output
+
+    input CLOCK_50, rstn;
+    input fire; //fire_en in FSM
+    input leftRight;
+
+    input [8:0] gunLoc_X;//REMARK: needs to be calculated based on UserID, Obj_Init_X, Obj_Init_Y                     
+    input [7:0] gunLoc_Y;        //in the MAIN file("VGADisplay2Obj.v")
+
+    output plot_EN;//needs to be used in vga_adapter
+    output [2:0] bullet_color;
+
+    output [8:0] bulletLoc_X;
+    output [7:0] bulletLoc_Y;
+    assign bulletLoc_X = oldX_Loc + XC - 1'b1;
+    assign bulletLoc_Y = gunLoc_Y;
+
+
+    wire [8:0] oldX_Loc, newX_Loc;//no need for Y since it never changes
+    wire [2:0] XC;
+    wire paint_done;
+
+
+    count bullet_len(CLOCK_50, rstn, plot_EN, ~plot_EN, XC);
+    assign paint_done = (XC == 3'b111)? 1:0;
+
+    bulletRegn X_InitialLOC (newX_Loc, fire, gunLoc_X, CLOCK_50, oldX_Loc);
+		defparam X_InitialLOC.n = 9;
+
+    bulletCounter Xcount(oldX_Loc, shift_EN, leftRight, CLOCK_50, newX_Loc);
+
+    speedClk waitCounter(CLOCK_50, load_speedClk, speedClk_en, rstn, c);
+
+    //wire paint_done;
+    wire c;//FSM input
+    wire shift_EN, load_speedClk, speedClk_en;//FSM output
+
+    Bullet_FSM fsm(/*inputs*/CLOCK_50, fire, c, paint_done, rstn, oldX_Loc,
+                    /*outputs*/ shift_EN, plot_EN, load_speedClk, speedClk_en, bullet_color);
+endmodule
+
+module Bullet_FSM(/*inputs*/CLOCK_50, fire_en, c, paint_done, rstn, bullet_x_loc,
+                    /*outputs*/ shift_en, plot_enable, load_speedClk, speedClk_en, px_color);
+    input CLOCK_50;
+    input fire_en/*wired to a KEY*/,paint_done ,rstn, c;
+	 input [8:0] bullet_x_loc;
+
+    output shift_en, plot_enable, load_speedClk, speedClk_en; //shift_en: enable the position counter, plot_en: enable the vga_adapter
+    output reg [2:0] px_color;
+
+    reg destruct_en;
+
+    parameter[5:0] Sidle = 6'b000001, Sdraw = 6'b000010, Swait = 6'b000100, 
+                    Serase = 6'b001000, Sshift = 6'b010000, Sdestruct = 6'b100000; 
+    reg[5:0] y, Y;
+
+    always@ (posedge CLOCK_50, negedge rstn)
+    begin
+        if(rstn == 0)
+            y <= Sdestruct;
+        else
+            y <= Y;
+    end
+
+    always@ (y, fire_en, paint_done, c)
+    begin
+        case(y)
+            Sidle: if(fire_en == 0) Y = Sdraw;
+                    else Y = Sidle;
+
+            Sdraw: if(paint_done == 1'b1) Y = Swait;
+                    else Y = Sdraw;
+
+            Swait:  if (bullet_x_loc == 9'd321) Y = Sdestruct;
+						  else if(c) Y = Serase;
+                    else Y = Swait;
+
+            Serase: if(paint_done && destruct_en) Y = Sidle;
+                    else if(!paint_done) Y = Serase;
+                    else Y = Sshift;
+
+            Sshift: Y = Sdraw;
+
+            Sdestruct: Y = Serase;
+				
+				default: Y = Sidle;
+        endcase
+    end
+
+    //output logic:
+    assign plot_enable = y[1] || y[3];
+    assign shift_en = y[4];
+    assign load_speedClk = y[0];
+    assign speedClk_en = y[2];
+
+    //color selection
+    always@(posedge CLOCK_50)
+    begin
+        if(y == Sdraw)
+            px_color = 3'b000;
+        else if(y == Serase)
+            px_color = 3'b111;
+    end
+
+    //destruct state output:
+    always@ (y) 
+    begin
+		case(y)	
+			Sdestruct: destruct_en = 1'b1;
+			Sidle: destruct_en = 1'b0;
+		endcase
+    end
+endmodule
+
+module bulletRegn(R, load_en, Load, Clock, Q);
+//Caution: This n need to be redefine in the top level module
+//Using: defparam U1.n = 7; //U1 is the name of the module
+
+//Citation: This module is modified based on the regn module in the vga_demo of VGA animation made by Prof. Brown
+
+    parameter n = 8;
+    input [n-1:0] R, Load;
+    input load_en, Clock;
+    output reg [n-1:0] Q;
+
+    always @(posedge Clock, negedge load_en)
+        if (!load_en)
+            Q <= Load;
+        else
+            Q <= R;
+endmodule
+
+module bulletCounter(oldX_loc, shift_enable, LeftRight, clock, newX_Loc);
+	input shift_enable, LeftRight;
+	input clock;
+    input [8:0] oldX_loc;
+
+	output reg [8:0] newX_Loc;
+
+	always@(posedge clock) begin
+		if (shift_enable) begin
+			if (LeftRight)
+				newX_Loc <= oldX_loc + 1; //moving right
+			else
+				newX_Loc <= oldX_loc - 1; //moving left
+		end
+	end
+endmodule
+
+module speedClk(CLOCK_50, load_en, enable, rstn, slow);
+
+    input CLOCK_50, rstn;
+    input load_en, enable;
+
+	output slow;
+
+	reg[20:0] fast;
+
+	always@ (posedge CLOCK_50, negedge rstn)
+	begin
+		if(rstn == 1'b0)
+			fast <= 20'd30000000;
+		else if(slow == 1'b1 || load_en)
+			fast <= 20'd30000000;
+		else if(enable)
+			fast <= fast - 1'b1;
+	end
+
+	assign slow = (fast == 20'b0)? 1:0;
+
+endmodule
+
+module count (Clock, Resetn, Enable, load, Q);
+
+//Citation: This module is modified based on the count module in the vga_demo of VGA animation made by Prof. Brown
+
+//To count X_currentLoc, n = 5
+//To count Y_currentLoc, n = 5
+
+    parameter n = 3;
+    input Clock, Resetn, Enable, load;
+    output reg [n-1:0] Q;
+
+    always @ (posedge Clock)
+        if (Resetn == 0)
+            Q <= 0;
+		  else if (load)
+				Q <= 0;
+        else if (Enable)
+            Q <= Q + 1;
+endmodule
